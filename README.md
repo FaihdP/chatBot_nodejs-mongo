@@ -24,7 +24,7 @@ Hello everyone 👋! This application is a whatsapp chatbot integrated with mong
 
 #### Get one menu
 
-```http
+```
    GET /chatbot/menu/get/{id}
 ```
 
@@ -48,7 +48,7 @@ This api link it use only in the first menu (root) is added, therefore, some par
 
 #### Post add menu option
 
-```http
+```
    POST /chatbot/menu/addOption/${id}
 ```
 
@@ -59,7 +59,7 @@ This api link it use only in the first menu (root) is added, therefore, some par
 
 #### Delete menu option
 
-```http
+```
    DELETE /chatbot/menu/deleteOption/${id}
 ```
 
