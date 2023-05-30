@@ -1,8 +1,8 @@
 import { Menu } from "./Menu.js";
 
 export class Menus {
-  constructor(value) {
-    this.root = new Menu(null, value);
+  constructor(value, id) {
+    this.root = new Menu(null, value, id);
   }
 
   showTree(node = this.root) {

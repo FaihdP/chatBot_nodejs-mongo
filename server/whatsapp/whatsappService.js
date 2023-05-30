@@ -6,34 +6,34 @@ import MenuDB from '../database/Menu.js';
 
 let currentMenu = null
 
-MenuDB.find({keys: null, menuParent: null}).then((menuRoot) => {console.log(menuRoot[0])})
-
 async function initList() {
-  const menuRoot = await MenuDB.find({keys: null, menuParent: null})
-  const menus = new Menus(menuRoot[0].value)
-  const menu = menus.root;
+  const menuRootSaved = await MenuDB.find({keys: null, menuParent: null})
+  const menuRoot = new Menus(menuRootSaved[0].value, menuRootSaved[0]._id).root;
   
-  menu.addOption(["A", "1", "Menu A"], "Menú A");
-  menu.addOption(["B", "2", "Menu B"], "Menú B");
-  const menuC = menu.addOption(["C", "3", "Menu C"], "Menú C");
-  menu.addOption(["D", "4", "Menu D"], "Menú D");
+  async function addOptions(menuParent) {
+    const options = await MenuDB.find({menuParent: menuParent.id})
+    
+    if (!options || options.length === 0) return;
 
-  menuC.addOption(["1", "Menu 1"], "Menú 1")
-  const menu2 = menuC.addOption(["2", "Menu 2"], "Menú 2")
+    for (let i = 0; i < options.length; i++) {
+      const option = options[i]
+      menuParent.addOption(option.keys, option.value, option._id);
+      await addOptions(menuParent.options[i]);
+    }
+  }
 
-  menu2.addOption(["I", "Menu I"], "Menu I")
-  menu2.addOption(["II", "Menu II"], "Menu II")
-  menu2.addOption(["III", "Menu III"], "Menu III")
+  await addOptions(menuRoot)
 
-  //console.log(menu);
-  return menu
+  return menuRoot
 }
 
 function listMenu(menu) {
   currentMenu = menu;
-  let message = "*" + menu.value + "*\n";
+  let message = menu.value + "\n";
+  if (currentMenu.menuParent != null) message = "_Opticion elegida:_ \n  " + message;
+  if (menu.options.length === 0) message += "\n  Este menú no tiene opciones";
   menu.options.forEach(element => message += "\n  " + element.value);
-  if (currentMenu.menuParent != null) message += "\n  Volver";
+  if (currentMenu.menuParent != null) message += "\n\nEscribe *volver* para regresar al anterior menú";
   return message;
 }
 
@@ -67,8 +67,7 @@ client.on('ready', () => {
 client.initialize();
 
 client.on('message', async (message) => {
-  //console.log(message.body)
-  if (message.body === "prueba") {
+  if ( currentMenu === null && message.body !== "" || message.body === "Inicio") {
     message.reply(listMenu(await initList()));
     return;
   }
