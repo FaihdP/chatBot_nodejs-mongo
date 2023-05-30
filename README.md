@@ -36,7 +36,7 @@ Hello everyone 👋! This application is a whatsapp chatbot integrated with mong
 
 This api link it use only in the first menu (root) is added, therefore, some parameters may be null.
 
-```http
+```
    POST /chatbot/menu/add
 ```
 
